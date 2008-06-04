@@ -1,0 +1,73 @@
+Acts As Linkable
+=================
+
+Allows to connect any two ActiveRecord objects through a double polymorphic association object - A Link (how surprising)
+We use this plugin to generate week links between objects allowing better flexibility. 
+This plugin used the Acts_as_commentable plugin as a base.
+
+***** TEST SUITE NOT COMPLETE **** 
+
+== Resources
+
+Install
+ * Run the following command:
+ 
+ script/plugin install 
+ 
+ * Create a new rails migration and add the following self.up and self.down methods
+ 
+  class AddLinksTable < ActiveRecord::Migration    
+	  def self.up
+	      create_table "links", :force => true do |t|
+	        t.column "created_at", :datetime, :null => false
+	        t.column "linkable_id", :integer, :default => 0, :null => false
+	        t.column "linkable_type", :string, :limit => 15, :default => "", :null => false
+	        t.column "target_id", :integer, :default => 0, :null => false
+	        t.column "target_type", :string, :limit => 15, :default => "", :null => false
+	        t.column "member_id", :integer, :default => 0, :null => false
+	    end
+
+	      add_index "links", ["member_id"], :name => "fk_links_member"
+	    end
+
+	    def self.down
+	      drop_table :links
+	    end
+
+	  def self.down
+	  end
+	end
+	
+
+== Usage
+ 
+ * Make you ActiveRecord model act as linkable.
+ 
+ class Model < ActiveRecord::Base
+ 	acts_as_linkable
+ end
+ 
+ * Add a comment to a model instance
+ 
+ model_1 = Model.find(1)
+ model_2 = Model.find(2)
+ 
+ model_1.links << model_2
+ 
+ model_1.linked 
+ [model_2]
+
+ model_2.linked
+ [model_1]
+
+== Credits
+
+Juixe - This plugin is heavily influced by Acts As Commantable.
+
+== Todo 
+Better test coverage...
+
+== More
+
+http://www.juixe.com/techknow/index.php/2006/06/18/acts-as-commentable-plugin/
+http://www.juixe.com/projects/acts_as_commentable
